@@ -142,31 +142,20 @@ redo log对于崩溃恢复来说是可以的，但是数据同步呢，还是得
 
 ### [16.“order%20by”是怎么工作的？](https://github.com/geekibli/mysql-study/blob/main/doc/16.%E2%80%9Corder%20by%E2%80%9D%E6%98%AF%E6%80%8E%E4%B9%88%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F(1).pdf)
 
-排序的字段如果有索引，就不需要排序了，索引自带排序。mysql为每个线程分配一块内存sort buffer （大小sort_buffer_size）**sort buffer在排序完成后，内存free还给系统。**下面两种排序都是归并排序算法。
-
-1、全文排序
-
-innodb索引命中之后，根据主键获取要排序的字段（改字段上没有索引，也没有覆盖索引），然后把**数据（select 的数据）**放到sort buffer，循环这个过程，所有的数据都放到sort buffer，如果sort buffer足够，就在内存进行排序，如果不够，需要借助**磁盘临时文件**，生成许多小文件各自排序，然后归并，获取最终结果。
-
-2、rowid排序
-
+排序的字段如果有索引，就不需要排序了，索引自带排序。mysql为每个线程分配一块内存sort buffer （大小sort_buffer_size）**sort buffer在排序完成后，内存free还给系统。**下面两种排序都是归并排序算法。  
+1、全文排序  
+innodb索引命中之后，根据主键获取要排序的字段（改字段上没有索引，也没有覆盖索引），然后把**数据（select 的数据）**放到sort buffer，循环这个过程，所有的数据都放到sort buffer，如果sort buffer足够，就在内存进行排序，如果不够，需要借助**磁盘临时文件**，生成许多小文件各自排序，然后归并，获取最终结果。  
+2、rowid排序  
 和全文排序不同的是，在sort buffer中存的只有主键和需要排序的字段，如果select中还有别的字段，是不可以直接返回的，还需要在回表根据主键把要查询的所有字段查出来，然后返回。
 
 ### [17.如何正确地显示随机消息？](https://github.com/geekibli/mysql-study/blob/main/doc/17.%E5%A6%82%E4%BD%95%E6%AD%A3%E7%A1%AE%E5%9C%B0%E6%98%BE%E7%A4%BA%E9%9A%8F%E6%9C%BA%E6%B6%88%E6%81%AF%EF%BC%9F(1).pdf)
 
-1、临时表排序
-
-`order by rand()` 使用了内存临时表，排序的算法使用的rowid（临时表在内存中，不用考虑回表的磁盘io）。
-
-2、磁盘临时表
-
-`tmp_table_size`默认16M，超过这个大小，会使用磁盘临时表（默认是innodb）
-
-3、优先队列算法
-
+1、临时表排序  
+`order by rand()` 使用了内存临时表，排序的算法使用的rowid（临时表在内存中，不用考虑回表的磁盘io）。  
+2、磁盘临时表  
+`tmp_table_size`默认16M，超过这个大小，会使用磁盘临时表（默认是innodb）  
+3、优先队列算法  
 通过构建堆来实现排序，堆的大小也是受 sort_buffer_size大小控制的，如果只能使用归并排序算法。
-
-
 
 ### [18、为什么这些sql业务逻辑相同，性能却查这么多？](https://github.com/geekibli/mysql-study/blob/main/doc/18.%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%BA%9BSQL%E8%AF%AD%E5%8F%A5%E9%80%BB%E8%BE%91%E7%9B%B8%E5%90%8C%E6%80%A7%E8%83%BD%E5%8D%B4%E5%B7%AE%E5%BC%82%E5%B7%A8%E5%A4%A7%EF%BC%9F.pdf)
 
