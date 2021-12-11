@@ -102,24 +102,24 @@
 ### [15.答疑文章（一）：日志和索引相关问题](https://github.com/geekibli/mysql-study/blob/main/doc/15.%E7%AD%94%E7%96%91%E6%96%87%E7%AB%A0%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E6%97%A5%E5%BF%97%E5%92%8C%E7%B4%A2%E5%BC%95%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98.pdf)
 
 这块是关于update + redo log + binlog的灵魂拷问，你可接住喽！  
-**为什么update的时候，写redo log和binlog要用两阶段提交？** **反证法，不用两阶段，直接提交**      
+<font color=#FF9999>**为什么update的时候，写redo log和binlog要用两阶段提交？** **反证法，不用两阶段，直接提交**</font>      
 1、先写redo log，crash，后写binlog，当前mysql数据更新了，但是从库没有更新；  
 2、先写binlog ， crash, 后写redo log, 从库数据更新了，但是当前mysql没有更新  
 
-**以上是在主从同步的角度上分析的，如果仅仅一个mysql实例情况下，没有两阶段提交会有什么问题呢？**  
+<font color=#FF9999>**以上是在主从同步的角度上分析的，如果仅仅一个mysql实例情况下，没有两阶段提交会有什么问题呢？**</font>  
 前提是Innodb中，redo log已经commit（非parpare状态）不能回滚。如果写redo log成功了，现在要回滚，是无法回滚的。**两阶段提交能保证mysql集群中所有实例的数据一致性。**  
 
-**只有binlog能不能保证崩溃恢复呢？**  
+<font color=#FF9999>**只有binlog能不能保证崩溃恢复呢？**</font>  
 不能，**binlog无法保证恢复数据页**，update先改数据页，写binlog，但是磁盘上的数据还是原来的。恢复的时候，不完整的binlog可以回滚，但是完整的binlog数据却无法恢复到最新。  
 
-**只有redo log可不可行？**  
+<font color=#FF9999>**只有redo log可不可行？**</font>  
 redo log对于崩溃恢复来说是可以的，但是数据同步呢，还是得依靠bin log。
 
-**数据落盘是怎么样？是从redo log更新还是buffer pool呢？**  
+<font color=#FF9999>**数据落盘是怎么样？是从redo log更新还是buffer pool呢？**</font>  
 1、正常刷盘的时候是直接把内存数据页（脏页）flush到磁盘，也就是buffer pool。  
 2、崩溃恢复的时候，磁盘的数据页+redo log得到脏页，也就是上一步
 
-**数据更新的时候先写内存还是先写redo log？**  
+<font color=#FF9999>**数据更新的时候先写内存还是先写redo log？**</font>  
 先写数据页，然后写redo log buffer, 在两阶段提交的第二阶段commit的时候，写redo log。当然这时候，binlog已经写完了。
 
 
