@@ -103,25 +103,39 @@
 
 这块是关于update + redo log + binlog的灵魂拷问，你可接住喽！  
 <font color=#FF9999>**为什么update的时候，写redo log和binlog要用两阶段提交？** **反证法，不用两阶段，直接提交**</font>      
+```
 1、先写redo log，crash，后写binlog，当前mysql数据更新了，但是从库没有更新；  
-2、先写binlog ， crash, 后写redo log, 从库数据更新了，但是当前mysql没有更新  
+2、先写binlog ， crash, 后写redo log, 从库数据更新了，但是当前mysql没有更新
+```
 
 <font color=#FF9999>**以上是在主从同步的角度上分析的，如果仅仅一个mysql实例情况下，没有两阶段提交会有什么问题呢？**</font>  
-前提是Innodb中，redo log已经commit（非parpare状态）不能回滚。如果写redo log成功了，现在要回滚，是无法回滚的。**两阶段提交能保证mysql集群中所有实例的数据一致性。**  
+```text
+前提是Innodb中，redo log已经commit（非parpare状态）不能回滚。如果写redo log成功了，现在要回滚，是无法回滚的。
+```
+两阶段提交能保证mysql集群中所有实例的数据一致性。❗️❗️
 
 <font color=#FF9999>**只有binlog能不能保证崩溃恢复呢？**</font>  
-不能，**binlog无法保证恢复数据页**，update先改数据页，写binlog，但是磁盘上的数据还是原来的。恢复的时候，不完整的binlog可以回滚，但是完整的binlog数据却无法恢复到最新。  
+```
+不能，**binlog无法保证恢复数据页**，update先改数据页，写binlog，但是磁盘上的数据还是原来的。
+恢复的时候，不完整的binlog可以回滚，但是完整的binlog数据却无法恢复到最新。  
+```
 
 <font color=#FF9999>**只有redo log可不可行？**</font>  
+```
 redo log对于崩溃恢复来说是可以的，但是数据同步呢，还是得依靠bin log。
+```
 
 <font color=#FF9999>**数据落盘是怎么样？是从redo log更新还是buffer pool呢？**</font>  
+```
 1、正常刷盘的时候是直接把内存数据页（脏页）flush到磁盘，也就是buffer pool。  
 2、崩溃恢复的时候，磁盘的数据页+redo log得到脏页，也就是上一步
+```
 
 <font color=#FF9999>**数据更新的时候先写内存还是先写redo log？**</font>  
-先写数据页，然后写redo log buffer, 在两阶段提交的第二阶段commit的时候，写redo log。当然这时候，binlog已经写完了。
-
+```
+先写数据页，然后写redo log buffer, 在两阶段提交的第二阶段commit的时候，写redo log。
+当然这时候，binlog已经写完了。
+```
 
 
 ### [18、为什么这些sql业务逻辑相同，性能却查这么多？](https://github.com/geekibli/mysql-study/blob/main/doc/18.%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%BA%9BSQL%E8%AF%AD%E5%8F%A5%E9%80%BB%E8%BE%91%E7%9B%B8%E5%90%8C%E6%80%A7%E8%83%BD%E5%8D%B4%E5%B7%AE%E5%BC%82%E5%B7%A8%E5%A4%A7%EF%BC%9F.pdf)
