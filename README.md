@@ -140,7 +140,7 @@ redo log对于崩溃恢复来说是可以的，但是数据同步呢，还是得
 当然这时候，binlog已经写完了。
 ```
 
-### [16.“order%20by”是怎么工作的？](https://github.com/geekibli/mysql-study/blob/main/doc/16.%E2%80%9Corder%20by%E2%80%9D%E6%98%AF%E6%80%8E%E4%B9%88%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F(1).pdf)
+### [16.“order by”是怎么工作的？](https://github.com/geekibli/mysql-study/blob/main/doc/16.%E2%80%9Corder%20by%E2%80%9D%E6%98%AF%E6%80%8E%E4%B9%88%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F(1).pdf)
 
 排序的字段如果有索引，就不需要排序了，索引自带排序。mysql为每个线程分配一块内存sort buffer （大小sort_buffer_size）**sort buffer在排序完成后，内存free还给系统。**下面两种排序都是归并排序算法。  
 1、全文排序  
@@ -185,6 +185,20 @@ innodb索引命中之后，根据主键获取要排序的字段（改字段上�
 ### [21.为什么我只改一行的语句锁这么多？](https://github.com/geekibli/mysql-study/blob/main/doc/21.%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E5%8F%AA%E6%94%B9%E4%B8%80%E8%A1%8C%E7%9A%84%E8%AF%AD%E5%8F%A5%E9%94%81%E8%BF%99%E4%B9%88%E5%A4%9A%EF%BC%9F.pdf)
 本文主要介绍了innodb的加锁规则。介绍了具体的规则和优化，还有8个案例辅助来学习。  
 其实这一篇文章不是很好理解，简易多读几遍，另外，评论区也有很多值得学习的知识。  
+
+### [22.MySQL有哪些“饮鸩止渴”提高性能的方法？](https://github.com/geekibli/mysql-study/blob/main/doc/22.MySQL%E6%9C%89%E5%93%AA%E4%BA%9B%E2%80%9C%E9%A5%AE%E9%B8%A9%E6%AD%A2%E6%B8%B4%E2%80%9D%E6%8F%90%E9%AB%98%E6%80%A7%E8%83%BD%E7%9A%84%E6%96%B9%E6%B3%95%EF%BC%9F.pdf)
+
+- 短链接风暴
+- 跳过权限验证（非推荐）
+- query rewrite临时解决坏sql问题，但是需要注意是否影响其他业务
+
+### [23.MySQL是怎么保证数据不丢的？](https://github.com/geekibli/mysql-study/blob/main/doc/23.MySQL%E6%98%AF%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E6%95%B0%E6%8D%AE%E4%B8%8D%E4%B8%A2%E7%9A%84%EF%BC%9F.pdf)
+
+- binlog写入机制
+- redo log写入机制和组提交
+- mysql 双1配置
+
+
 
 
 
