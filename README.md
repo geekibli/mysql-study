@@ -199,7 +199,29 @@ innodb索引命中之后，根据主键获取要排序的字段（改字段上�
 - redo log写入机制和组提交
 - mysql 双1配置
 
+### [24.MySQL是怎么保证主备一致的？](https://github.com/geekibli/mysql-study/blob/main/doc/24.MySQL%E6%98%AF%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E4%B8%BB%E5%A4%87%E4%B8%80%E8%87%B4%E7%9A%84%EF%BC%9F.pdf)
 
+- 主从同步的原理（主生成binlog，发送给从库的io thread，存到从库的relay log, sql thread同步数据到磁盘）
+- 三种bin log文件格式介绍（statement , row, mixed）
+- 双M模式下，binlog循环复制问题解决（判断server id）
+
+### [**25.MySQL是怎么保证高可用的？**](https://github.com/geekibli/mysql-study/blob/main/doc/25.MySQL%E6%98%AF%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E9%AB%98%E5%8F%AF%E7%94%A8%E7%9A%84%EF%BC%9F.pdf)
+
+- 什么是主备延迟(seconds_behind_master)，如何计算？造成主备延迟的原因（备库机器性能差，备库压力大，大事务等）
+- 可靠性优先策略（推荐 show slave status 查看 seconds_behind_master）
+- 可用性优先策略（可能造成数据不一致）
+
+> 主从延迟一般生产环境要控制在1s内，否则需要进行优化
+
+### [26.备库为什么会延迟好几个小时？](https://github.com/geekibli/mysql-study/blob/main/doc/26.%E5%A4%87%E5%BA%93%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E5%BB%B6%E8%BF%9F%E5%A5%BD%E5%87%A0%E4%B8%AA%E5%B0%8F%E6%97%B6%EF%BC%9F.pdf)
+
+最初的sql thread处理relay log的时候，是单线程的，这样可能会导致主备延迟。本文介绍了并行多线程处理relay log的具体策略的演进过程。包括“按表分发”，“按行分发“，按照redo log组提交的思想进行并行处理等。
+
+对于java业务开发，这片文章不是很好理解，建议多看几遍。
+
+### [**27.主库出问题了从库怎么办？**](https://github.com/geekibli/mysql-study/blob/main/doc/27.%E4%B8%BB%E5%BA%93%E5%87%BA%E9%97%AE%E9%A2%98%E4%BA%86%E4%BB%8E%E5%BA%93%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F.pdf)
+
+### 	
 
 
 
