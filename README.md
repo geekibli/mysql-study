@@ -221,7 +221,12 @@ innodb索引命中之后，根据主键获取要排序的字段（改字段上�
 
 ### [**27.主库出问题了从库怎么办？**](https://github.com/geekibli/mysql-study/blob/main/doc/27.%E4%B8%BB%E5%BA%93%E5%87%BA%E9%97%AE%E9%A2%98%E4%BA%86%E4%BB%8E%E5%BA%93%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F.pdf)
 
-### 	
+在一主单备多从模式下完成主库的切换的方式：
+
+- 通过手动指定binlog文件下标
+- 通过GTID的方式，自动完成主从切换
+
+
 
 
 
