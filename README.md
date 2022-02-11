@@ -1,4 +1,4 @@
-# mysql-study
+# 满满的干活，MySQL肝起来！
 
 ### [01.基础架构：一条SQL查询语句是如何执行的？](https://github.com/geekibli/mysql-study/blob/main/mysql实战45讲/01.%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84%EF%BC%9A%E4%B8%80%E6%9D%A1SQL%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84%EF%BC%9F.pdf)
 1、一条SQL查询语句是如何执行的 等同于 请你讲一下mysql的基本架构。  
